@@ -1,5 +1,9 @@
 class PerfectNumbersCalculator {
-  constructor({ max }) {
+  constructor(config) {
+    this.setNewMaximum(config);
+  }
+  
+  setNewMaximum({ max }) {
     this.max = max;
     console.log(`Maximum number set to ${max}`);
     this.integerArr = [...Array(max).keys(), max].splice(1,);
@@ -10,15 +14,20 @@ class PerfectNumbersCalculator {
     return ((timeNow - startTime) / 1000).toFixed(2);
   }
   
-  _checkIfPerfect(num, divisors) {
+  checkIfPerfect(num, log = true) {
+    const divisors = this.getDivisors(num)
     const sum = divisors.reduce(
       ((total, currentValue) => total + currentValue), 0
     );
-    if (sum === num) return num;
-    return null;
+    if (sum === num) {
+      if (log) console.log(`Number ${num} is perfect!`);
+      return true;
+    }
+    if (log) console.log(`Number ${num} is not perfect.`);
+    return false;
   }
   
-  _getDivisors(num) {
+  getDivisors(num) {
     let count = 1;
     const divisors = [];
     while(count < num) {
@@ -39,9 +48,7 @@ class PerfectNumbersCalculator {
           + ` Time taken: ${this._getTimeDiff(startTime)}s`
         );
       }
-      const perf = this._checkIfPerfect(
-        number, this._getDivisors(number)
-      ); 
+      const perf = this.checkIfPerfect(number, false); 
       if (perf) perfectNums.push(number);
     });
     // Print the results
