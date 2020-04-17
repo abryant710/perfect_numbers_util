@@ -1,3 +1,6 @@
+/* 
+  This class acts as a utility to find perfect number values
+*/
 class PerfectNumbersCalculator {
   constructor(config) {
     this.setNewMaximum(config);
