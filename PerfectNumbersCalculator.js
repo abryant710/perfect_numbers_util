@@ -5,11 +5,47 @@ class PerfectNumbersCalculator {
   constructor(config) {
     this.setNewMaximum(config);
   }
+
+  getNonPrimesBelow(max) {
+    const gen = this._generatePrimes(false);
+    let curCount = 4;
+    const integerArr = []; // Only add non-primes to this array
+    while (curCount <= max) {
+      curCount = gen.next().value;
+      integerArr.push(curCount);
+    }
+    integerArr.pop();
+    return integerArr;
+  }
+
+  * _generatePrimes(getPrimes = true) { // False generates non-primes array
+    const markedNotPrimeMap = new Map();
+    let valueToCheck = 2;
+    while(true) {
+        if (!(markedNotPrimeMap.has(valueToCheck))) {
+            if (getPrimes) yield valueToCheck
+            markedNotPrimeMap.set(valueToCheck**2, [valueToCheck])
+        } else {
+            let primes =markedNotPrimeMap.get(valueToCheck)
+            primes.forEach(prime=> {
+                let nextMultipleOfPrime = prime + valueToCheck;
+                if (markedNotPrimeMap.has(nextMultipleOfPrime)) {
+                    markedNotPrimeMap.get(nextMultipleOfPrime).push(prime);
+                } else {
+                    markedNotPrimeMap.set(nextMultipleOfPrime, [prime]);
+                }
+            })
+            markedNotPrimeMap.delete(valueToCheck);
+            if (!getPrimes) yield valueToCheck
+        }
+        valueToCheck += 1
+    }
+  }
   
   setNewMaximum({ max }) {
     this.max = max;
     console.log(`Maximum number set to ${max}`);
-    this.integerArr = [...Array(max).keys(), max].splice(1,);
+    this.integerArr = this.getNonPrimesBelow(max);
   }
   
   _getTimeDiff(startTime) {
@@ -58,4 +94,4 @@ class PerfectNumbersCalculator {
     console.log(`100% done in ${this._getTimeDiff(startTime)}s.`
     + ` Result: [${perfectNums. join(', ')}].`);
   }
-}
+};
